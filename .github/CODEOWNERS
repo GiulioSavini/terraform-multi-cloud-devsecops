@@ -1,0 +1,14 @@
+# Default owner for everything in the repository
+*                   @GiulioSavini
+
+# AWS modules
+modules/aws/        @GiulioSavini
+
+# Azure modules
+modules/azure/      @GiulioSavini
+
+# GCP modules
+modules/gcp/        @GiulioSavini
+
+# Shared modules
+modules/shared/     @GiulioSavini
