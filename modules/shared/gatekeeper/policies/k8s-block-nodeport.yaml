@@ -1,7 +1,11 @@
+---
+# ConstraintTemplate: Block NodePort services
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8sblocknodeport
+  annotations:
+    description: "Prevents creation of Services with type NodePort"
 spec:
   crd:
     spec:
@@ -14,15 +18,23 @@ spec:
 
         violation[{"msg": msg}] {
           input.review.object.spec.type == "NodePort"
-          msg := "Services of type NodePort are not allowed. Use LoadBalancer or ClusterIP instead."
+          msg := sprintf("Service '%v/%v' of type NodePort is not allowed. Use LoadBalancer or ClusterIP instead.", [
+            input.review.object.metadata.namespace,
+            input.review.object.metadata.name
+          ])
         }
 ---
+# Constraint: Block all NodePort services
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sBlockNodePort
 metadata:
   name: block-nodeport-services
 spec:
+  enforcementAction: deny
   match:
     kinds:
       - apiGroups: [""]
         kinds: ["Service"]
+    excludedNamespaces:
+      - kube-system
+      - kube-public

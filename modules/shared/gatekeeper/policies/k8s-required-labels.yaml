@@ -1,7 +1,11 @@
+---
+# ConstraintTemplate: Require specific labels on resources
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8srequiredlabels
+  annotations:
+    description: "Requires specified labels on Kubernetes resources"
 spec:
   crd:
     spec:
@@ -13,8 +17,12 @@ spec:
           properties:
             labels:
               type: array
+              description: "List of required label keys"
               items:
                 type: string
+            message:
+              type: string
+              description: "Custom error message"
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
@@ -25,18 +33,35 @@ spec:
           required := {label | label := input.parameters.labels[_]}
           missing := required - provided
           count(missing) > 0
-          msg := sprintf("Missing required labels: %v", [missing])
+          msg := sprintf("Resource '%v/%v' is missing required labels: %v", [
+            input.review.object.metadata.namespace,
+            input.review.object.metadata.name,
+            missing
+          ])
         }
 ---
+# Constraint: Require 'app' and 'environment' labels on Deployments and StatefulSets
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sRequiredLabels
 metadata:
   name: require-app-and-env-labels
 spec:
+  enforcementAction: deny
   match:
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
+    excludedNamespaces:
+      - kube-system
+      - kube-public
+      - gatekeeper-system
+      - cert-manager
+      - ingress-nginx
+      - external-dns
+      - vault
+      - monitoring
+      - linkerd
+      - linkerd-viz
   parameters:
     labels:
       - "app"
