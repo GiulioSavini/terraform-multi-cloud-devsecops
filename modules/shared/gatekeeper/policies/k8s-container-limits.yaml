@@ -1,7 +1,11 @@
+---
+# ConstraintTemplate: Require container resource limits
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
   name: k8scontainerlimits
+  annotations:
+    description: "Requires containers to have resource limits (CPU and memory) defined"
 spec:
   crd:
     spec:
@@ -15,27 +19,57 @@ spec:
         violation[{"msg": msg}] {
           container := input.review.object.spec.containers[_]
           not container.resources.limits
-          msg := sprintf("Container '%v' must have resource limits defined", [container.name])
+          msg := sprintf("Container '%v' in %v '%v/%v' must have resource limits defined", [
+            container.name,
+            input.review.object.kind,
+            input.review.object.metadata.namespace,
+            input.review.object.metadata.name
+          ])
         }
 
         violation[{"msg": msg}] {
           container := input.review.object.spec.containers[_]
           not container.resources.limits.cpu
-          msg := sprintf("Container '%v' must have CPU limits defined", [container.name])
+          msg := sprintf("Container '%v' in %v '%v/%v' must have CPU limits defined", [
+            container.name,
+            input.review.object.kind,
+            input.review.object.metadata.namespace,
+            input.review.object.metadata.name
+          ])
         }
 
         violation[{"msg": msg}] {
           container := input.review.object.spec.containers[_]
           not container.resources.limits.memory
-          msg := sprintf("Container '%v' must have memory limits defined", [container.name])
+          msg := sprintf("Container '%v' in %v '%v/%v' must have memory limits defined", [
+            container.name,
+            input.review.object.kind,
+            input.review.object.metadata.namespace,
+            input.review.object.metadata.name
+          ])
         }
 ---
+# Constraint: Require resource limits on all workload containers
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sContainerLimits
 metadata:
   name: require-container-limits
 spec:
+  enforcementAction: deny
   match:
     kinds:
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet", "DaemonSet"]
+      - apiGroups: ["batch"]
+        kinds: ["Job", "CronJob"]
+    excludedNamespaces:
+      - kube-system
+      - kube-public
+      - gatekeeper-system
+      - cert-manager
+      - ingress-nginx
+      - external-dns
+      - vault
+      - monitoring
+      - linkerd
+      - linkerd-viz
