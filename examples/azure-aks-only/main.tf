@@ -27,7 +27,10 @@ provider "azurerm" {
 
 variable "subscription_id" { type = string }
 variable "tenant_id" { type = string }
-variable "location" { type = string; default = "westeurope" }
+variable "location" {
+  type    = string
+  default = "westeurope"
+}
 
 locals {
   project     = "aks-example"
