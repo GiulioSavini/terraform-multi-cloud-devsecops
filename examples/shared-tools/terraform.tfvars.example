@@ -1,0 +1,5 @@
+# Shared Tools Example (Vault + Gatekeeper + Prometheus + Linkerd)
+# Requires an existing K8s cluster with kubectl configured
+
+environment      = "dev"
+grafana_password = "change-me-in-production"
