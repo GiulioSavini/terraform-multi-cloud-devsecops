@@ -1,0 +1,161 @@
+name: "Drift Detection"
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # Daily at 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to check"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - dev
+          - stg
+          - prd
+
+permissions:
+  contents: read
+  issues: write
+  id-token: write
+
+env:
+  TF_VERSION: "1.7.5"
+
+jobs:
+  drift:
+    name: "Drift Check - ${{ matrix.environment }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [dev, stg, prd]
+    steps:
+      - name: Check if environment should run
+        id: check
+        run: |
+          INPUT_ENV="${{ github.event.inputs.environment || 'all' }}"
+          if [[ "$INPUT_ENV" == "all" || "$INPUT_ENV" == "${{ matrix.environment }}" ]]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout
+        if: steps.check.outputs.should_run == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        if: steps.check.outputs.should_run == 'true'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS Credentials
+        if: steps.check.outputs.should_run == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: eu-west-1
+
+      - name: Azure Login
+        if: steps.check.outputs.should_run == 'true'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: GCP Auth
+        if: steps.check.outputs.should_run == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Terraform Init
+        if: steps.check.outputs.should_run == 'true'
+        working-directory: environments/${{ matrix.environment }}
+        run: terraform init -input=false
+
+      - name: Detect Drift
+        if: steps.check.outputs.should_run == 'true'
+        id: drift
+        working-directory: environments/${{ matrix.environment }}
+        run: |
+          set +e
+          terraform plan -input=false -detailed-exitcode -var-file=terraform.tfvars \
+            -out=drift.tfplan 2>&1 | tee drift_output.txt
+          EXIT_CODE=$?
+          set -e
+
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "drift_detected=false" >> $GITHUB_OUTPUT
+            echo "status=No drift detected" >> $GITHUB_OUTPUT
+          elif [ $EXIT_CODE -eq 2 ]; then
+            echo "drift_detected=true" >> $GITHUB_OUTPUT
+            echo "status=DRIFT DETECTED" >> $GITHUB_OUTPUT
+            echo "drift_details<<EOF" >> $GITHUB_OUTPUT
+            head -c 60000 drift_output.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "drift_detected=error" >> $GITHUB_OUTPUT
+            echo "status=ERROR during plan" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Issue on Drift
+        if: steps.check.outputs.should_run == 'true' && steps.drift.outputs.drift_detected == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `[Drift] Configuration drift detected in ${{ matrix.environment }}`;
+            const body = `## Drift Detection Report
+
+            **Environment:** \`${{ matrix.environment }}\`
+            **Date:** ${new Date().toISOString()}
+            **Workflow:** [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            ### Drift Details
+            \`\`\`
+            ${{ steps.drift.outputs.drift_details }}
+            \`\`\`
+
+            ### Action Required
+            - Review the drift and determine if it was intentional
+            - If unintentional, run \`make apply ENV=${{ matrix.environment }}\` to reconcile
+            - If intentional, update the Terraform code to match
+
+            /cc @${{ github.repository_owner }}`;
+
+            // Check for existing open drift issues for this environment
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'drift,${{ matrix.environment }}'
+            });
+
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['drift', '${{ matrix.environment }}', 'infrastructure']
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues.data[0].number,
+                body: body
+              });
+            }
+
+      - name: Summary
+        if: steps.check.outputs.should_run == 'true'
+        run: |
+          echo "### Drift Detection - ${{ matrix.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ steps.drift.outputs.status }}" >> $GITHUB_STEP_SUMMARY
