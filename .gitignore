@@ -1,0 +1,64 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+!*.tfvars.example
+.terraformrc
+terraform.rc
+.terraform.tfstate.lock.info
+
+# Terragrunt
+.terragrunt-cache/
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+.kube/
+
+# Helm
+charts/*.tgz
+*.tgz
+
+# Vault
+*.vault-token
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment / Secrets
+.env
+.env.*
+*.pem
+*.key
+*.crt
+!*.crt.example
+credentials
+credentials.*
+secret.*
+
+# Infracost
+.infracost/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Pre-commit
+.pre-commit-cache/
