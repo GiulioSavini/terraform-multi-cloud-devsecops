@@ -10,7 +10,7 @@ variable "replicas" {
 }
 
 variable "enable_viz_prometheus" {
-  description = "Enable Prometheus in Linkerd Viz (disable if using external Prometheus)"
+  description = "Enable built-in Prometheus in Linkerd Viz"
   type        = bool
   default     = false
 }
