@@ -36,8 +36,9 @@ module "monitoring" {
     helm       = helm.eks
   }
 
-  environment    = var.environment
-  retention_days = var.monitoring_retention_days
+  environment            = var.environment
+  retention_days         = var.monitoring_retention_days
+  grafana_admin_password = var.grafana_admin_password
 
   depends_on = [module.aws_eks]
 }
