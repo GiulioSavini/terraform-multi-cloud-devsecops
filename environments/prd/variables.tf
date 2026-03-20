@@ -168,6 +168,12 @@ variable "monitoring_retention_days" {
   default     = 30
 }
 
+variable "grafana_admin_password" {
+  description = "Grafana admin password"
+  type        = string
+  sensitive   = true
+}
+
 variable "domain_name" {
   description = "Base domain name for DNS records"
   type        = string

@@ -108,7 +108,7 @@ variable "node_disk_size" {
 variable "endpoint_public_access" {
   description = "Whether the EKS cluster API endpoint is publicly accessible"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "log_retention_days" {

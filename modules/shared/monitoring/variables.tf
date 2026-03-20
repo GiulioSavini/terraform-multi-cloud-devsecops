@@ -26,14 +26,13 @@ variable "retention_days" {
 }
 
 variable "grafana_admin_password" {
-  description = "Admin password for Grafana"
+  description = "Grafana admin password"
   type        = string
   sensitive   = true
-  default     = "admin"
 }
 
 variable "storage_class" {
-  description = "Storage class for persistent volumes"
+  description = "Kubernetes storage class for persistent volumes"
   type        = string
   default     = "gp2"
 }

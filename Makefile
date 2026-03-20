@@ -81,7 +81,7 @@ sec: ## Run security scans (tfsec + checkov)
 
 docs: ## Generate Terraform docs
 	@echo "$(GREEN)Generating docs...$(NC)"
-	find modules -name "main.tf" -execdir terraform-docs markdown table . -o README.md \;
+	find modules -name "main.tf" -execdir terraform-docs markdown table . --output-file README.md \;
 
 cost: ## Estimate costs with Infracost
 	@echo "$(GREEN)Running Infracost for $(ENV)...$(NC)"
