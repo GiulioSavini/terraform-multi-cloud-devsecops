@@ -1,13 +1,3 @@
-variable "environment" {
-  description = "Environment name (dev, stg, prd)"
-  type        = string
-
-  validation {
-    condition     = contains(["dev", "stg", "prd"], var.environment)
-    error_message = "Environment must be one of: dev, stg, prd."
-  }
-}
-
 variable "namespace" {
   description = "Kubernetes namespace for Vault"
   type        = string
@@ -35,4 +25,10 @@ variable "storage_class" {
   description = "Storage class for Vault persistent volumes"
   type        = string
   default     = "gp2"
+}
+
+variable "tls_disable" {
+  description = "Disable TLS for Vault listener (enable only in dev)"
+  type        = bool
+  default     = false
 }

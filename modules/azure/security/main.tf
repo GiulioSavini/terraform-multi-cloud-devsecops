@@ -98,12 +98,6 @@ resource "azurerm_key_vault" "this" {
   tags = var.common_tags
 }
 
-variable "allowed_subnet_ids" {
-  description = "List of subnet IDs allowed to access the Key Vault"
-  type        = list(string)
-  default     = []
-}
-
 # ─── Key Vault Diagnostics ───────────────────────────────────
 resource "azurerm_monitor_diagnostic_setting" "key_vault" {
   count = var.log_analytics_workspace_id != "" ? 1 : 0
