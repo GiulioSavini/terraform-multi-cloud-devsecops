@@ -13,7 +13,7 @@ resource "helm_release" "kube_prometheus_stack" {
   timeout          = 900
 
   # ─── Grafana ────────────────────────────────────────────────
-  set {
+  set_sensitive {
     name  = "grafana.adminPassword"
     value = var.grafana_admin_password
   }

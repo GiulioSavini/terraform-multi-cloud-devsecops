@@ -9,6 +9,8 @@ locals {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_partition" "current" {}
+data "aws_region" "current" {}
 
 # ─── WAFv2 WebACL ────────────────────────────────────────────
 resource "aws_wafv2_web_acl" "this" {
@@ -281,7 +283,7 @@ resource "aws_iam_role" "config" {
 }
 
 resource "aws_iam_role_policy_attachment" "config" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWS_ConfigRole"
   role       = aws_iam_role.config.name
 }
 
@@ -305,13 +307,13 @@ resource "aws_iam_role_policy" "config_s3" {
 resource "aws_securityhub_account" "this" {}
 
 resource "aws_securityhub_standards_subscription" "aws_foundational" {
-  standards_arn = "arn:aws:securityhub:::ruleset/aws-foundational-security-best-practices/v/1.0.0"
+  standards_arn = "arn:${data.aws_partition.current.partition}:securityhub:${data.aws_region.current.name}::standards/aws-foundational-security-best-practices/v/1.0.0"
 
   depends_on = [aws_securityhub_account.this]
 }
 
 resource "aws_securityhub_standards_subscription" "cis" {
-  standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.4.0"
+  standards_arn = "arn:${data.aws_partition.current.partition}:securityhub:${data.aws_region.current.name}::standards/cis-aws-foundations-benchmark/v/1.4.0"
 
   depends_on = [aws_securityhub_account.this]
 }

@@ -43,7 +43,7 @@ resource "azurerm_kubernetes_cluster" "this" {
     node_count                   = var.system_node_count
     min_count                    = var.system_node_count
     max_count                    = var.system_node_max_count
-    enable_auto_scaling          = true
+    auto_scaling_enabled         = true
     vnet_subnet_id               = var.vnet_subnet_id
     os_disk_size_gb              = 50
     os_disk_type                 = "Managed"
@@ -115,7 +115,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "workload" {
   vm_size               = var.system_node_vm_size
   min_count             = 1
   max_count             = var.system_node_max_count
-  enable_auto_scaling   = true
+  auto_scaling_enabled  = true
   vnet_subnet_id        = var.vnet_subnet_id
   os_disk_size_gb       = 100
   zones                 = var.environment == "prd" ? ["1", "2", "3"] : ["1"]
