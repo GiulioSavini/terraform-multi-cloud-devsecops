@@ -3,6 +3,12 @@
 # Vault in HA mode with Raft storage, injector enabled, and CSI provider.
 # -----------------------------------------------------------------------------
 
+variable "tls_disable" {
+  description = "Disable TLS for Vault listener (enable only in dev)"
+  type        = bool
+  default     = false
+}
+
 resource "helm_release" "vault" {
   name             = "vault"
   repository       = "https://helm.releases.hashicorp.com"
@@ -40,7 +46,7 @@ resource "helm_release" "vault" {
       ui = true
 
       listener "tcp" {
-        tls_disable = 1
+        tls_disable = ${var.tls_disable ? 1 : 0}
         address = "[::]:8200"
         cluster_address = "[::]:8201"
         telemetry {

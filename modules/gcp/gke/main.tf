@@ -62,7 +62,7 @@ resource "google_container_cluster" "this" {
   # Private Cluster
   private_cluster_config {
     enable_private_nodes    = true
-    enable_private_endpoint = var.environment == "prd"
+    enable_private_endpoint = var.environment != "dev"
     master_ipv4_cidr_block  = "172.16.0.0/28"
   }
 
@@ -104,14 +104,6 @@ resource "google_container_cluster" "this" {
   master_auth {
     client_certificate_config {
       issue_client_certificate = false
-    }
-  }
-
-  # Shielded Nodes
-  node_config {
-    shielded_instance_config {
-      enable_secure_boot          = true
-      enable_integrity_monitoring = true
     }
   }
 
