@@ -90,8 +90,9 @@ resource "azurerm_key_vault" "this" {
   soft_delete_retention_days = 30
 
   network_acls {
-    default_action = "Deny"
-    bypass         = "AzureServices"
+    default_action             = "Deny"
+    bypass                     = "AzureServices"
+    virtual_network_subnet_ids = var.allowed_subnet_ids
   }
 
   tags = var.common_tags
@@ -99,6 +100,8 @@ resource "azurerm_key_vault" "this" {
 
 # ─── Key Vault Diagnostics ───────────────────────────────────
 resource "azurerm_monitor_diagnostic_setting" "key_vault" {
+  count = var.log_analytics_workspace_id != "" ? 1 : 0
+
   name                       = "${local.name_prefix}-kv-diag"
   target_resource_id         = azurerm_key_vault.this.id
   log_analytics_workspace_id = var.log_analytics_workspace_id
@@ -111,6 +114,4 @@ resource "azurerm_monitor_diagnostic_setting" "key_vault" {
     category = "AllMetrics"
     enabled  = true
   }
-
-  count = var.log_analytics_workspace_id != "" ? 1 : 0
 }

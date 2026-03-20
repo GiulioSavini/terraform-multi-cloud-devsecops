@@ -40,7 +40,7 @@ resource "helm_release" "vault" {
       ui = true
 
       listener "tcp" {
-        tls_disable = 1
+        tls_disable = ${var.tls_disable ? 1 : 0}
         address = "[::]:8200"
         cluster_address = "[::]:8201"
         telemetry {
