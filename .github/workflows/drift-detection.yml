@@ -28,6 +28,7 @@ jobs:
   drift:
     name: "Drift Check - ${{ matrix.environment }}"
     runs-on: ubuntu-latest
+    if: vars.CLOUD_CREDENTIALS_CONFIGURED == 'true'
     strategy:
       fail-fast: false
       matrix:
