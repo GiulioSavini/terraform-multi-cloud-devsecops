@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Every job here can fail the build. An earlier version of this workflow had
+# been narrowed until nothing could: the Trivy scan ran with exit-code 0 and
+# the Checkov step ended in '|| true'. A pipeline that is green regardless of
+# its findings provides no signal. If a check is too noisy, fix the finding or
+# delete the check — do not neutralise it with continue-on-error.
+
+env:
+  TF_VERSION: "1.9.8"
+
+jobs:
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - run: terraform fmt -check -recursive -diff
+
+  validate:
+    name: Validate ${{ matrix.dir }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dir:
+          - platform/naming
+          - platform/tagging
+          - compliance/controls
+          - domains/networking
+          - domains/access-control
+          - domains/cluster-platform
+          - domains/traffic-ingress
+          - domains/policy-enforcement
+          - domains/secrets-management
+          - domains/observability
+          - domains/service-mesh
+          - applications/cloud-foundation
+          - applications/cluster-services
+          - deployments/dev/foundation
+          - deployments/dev/services-aws
+          - deployments/stg/foundation
+          - deployments/stg/services-aws
+          - deployments/stg/services-azure
+          - deployments/prd/foundation
+          - deployments/prd/services-aws
+          - deployments/prd/services-azure
+          - deployments/prd/services-gcp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - name: Init and validate
+        working-directory: ${{ matrix.dir }}
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
+
+  boundaries:
+    name: Bounded context boundaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/check-boundaries.sh
+
+  policy:
+    name: Policy unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: open-policy-agent/setup-conftest@v0.4.0
+      - run: conftest verify --policy compliance/policies
+
+  lint:
+    name: tflint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: terraform-linters/setup-tflint@v4
+      - run: tflint --init
+      - run: tflint --recursive --minimum-failure-severity=warning
+
+  security:
+    name: Trivy config scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: config
+          scan-ref: .
+          exit-code: "1"
+          severity: CRITICAL,HIGH
+          trivyignores: .trivyignore

@@ -1,0 +1,9 @@
+# Suppressions must name the control and the reason. An entry without a reason
+# is a finding someone hid, and review should treat it as one.
+
+# AVD-AWS-0040 / AVD-AWS-0041: the EKS API server is public in dev and stg by
+# design — a private endpoint needs a bastion or VPN this platform does not
+# provision. Policy CLU-01 asserts it is disabled in prd, and that assertion is
+# unit tested in compliance/policies/kubernetes_test.rego.
+AVD-AWS-0040
+AVD-AWS-0041
