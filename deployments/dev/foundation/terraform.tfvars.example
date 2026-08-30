@@ -1,0 +1,11 @@
+owner               = "platform-team"
+cost_center         = "CC-2000"
+data_classification = "internal"
+
+aws_region = "eu-west-1"
+
+azure_subscription_id = ""
+gcp_project_id        = ""
+gcp_region            = "europe-west1"
+
+log_analytics_workspace_id = ""

@@ -1,0 +1,12 @@
+owner               = "platform-team"
+cost_center         = "CC-2000"
+data_classification = "internal"
+
+domain_name       = "dev.example.com"
+letsencrypt_email = "platform-certs@example.com"
+
+aws_region = "eu-west-1"
+
+# Never commit the real value. Inject at apply time:
+#   TF_VAR_grafana_admin_password="$(vault kv get -field=password secret/dev/grafana)"
+grafana_admin_password = ""

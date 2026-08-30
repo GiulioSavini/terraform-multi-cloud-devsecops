@@ -62,3 +62,7 @@ Thumbs.db
 
 # Pre-commit
 .pre-commit-cache/
+
+# Local plan artifacts used by `make policy-plan`
+*.tfplan
+tfplan.json
