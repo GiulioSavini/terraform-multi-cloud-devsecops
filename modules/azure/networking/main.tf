@@ -116,7 +116,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "aks" {
         type = "Https"
         port = 443
       }
-      source_addresses  = [cidrsubnet(var.vnet_cidr, 4, 0)]
+      source_addresses = [cidrsubnet(var.vnet_cidr, 4, 0)]
       destination_fqdns = [
         "*.hcp.${var.location}.azmk8s.io",
         "mcr.microsoft.com",

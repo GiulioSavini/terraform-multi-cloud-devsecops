@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 
 locals {
-  name_prefix = "${var.cluster_name}"
+  name_prefix = var.cluster_name
   oidc_id     = replace(var.cluster_oidc_issuer, "https://", "")
 }
 

@@ -21,9 +21,9 @@ module "gcp_gke" {
   cluster_name       = "${local.name_prefix}-gke"
   kubernetes_version = "1.29"
 
-  network            = module.gcp_networking.network_name
-  subnetwork         = module.gcp_networking.subnet_name
-  pods_range_name    = module.gcp_networking.pods_range_name
+  network             = module.gcp_networking.network_name
+  subnetwork          = module.gcp_networking.subnet_name
+  pods_range_name     = module.gcp_networking.pods_range_name
   services_range_name = module.gcp_networking.services_range_name
 
   node_count        = var.gcp_gke_node_count

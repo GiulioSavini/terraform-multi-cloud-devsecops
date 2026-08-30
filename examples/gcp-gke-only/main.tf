@@ -46,16 +46,16 @@ module "networking" {
 module "gke" {
   source = "../../modules/gcp/gke"
 
-  project             = local.project
-  environment         = local.environment
-  gcp_project_id      = var.gcp_project_id
-  region              = "europe-west1"
-  network_id          = module.networking.network_id
-  subnet_id           = module.networking.subnet_id
-  node_machine_type   = "e2-medium"
-  node_min_count      = 1
-  node_max_count      = 3
-  labels              = local.labels
+  project           = local.project
+  environment       = local.environment
+  gcp_project_id    = var.gcp_project_id
+  region            = "europe-west1"
+  network_id        = module.networking.network_id
+  subnet_id         = module.networking.subnet_id
+  node_machine_type = "e2-medium"
+  node_min_count    = 1
+  node_max_count    = 3
+  labels            = local.labels
 }
 
 module "security" {

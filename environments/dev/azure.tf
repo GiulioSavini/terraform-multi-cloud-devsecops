@@ -16,17 +16,17 @@ module "azure_networking" {
 module "azure_aks" {
   source = "../../modules/azure/aks"
 
-  project            = var.project
-  environment        = var.environment
-  location           = var.azure_location
+  project             = var.project
+  environment         = var.environment
+  location            = var.azure_location
   resource_group_name = module.azure_networking.resource_group_name
-  cluster_name       = "${local.name_prefix}-aks"
-  kubernetes_version = "1.29"
+  cluster_name        = "${local.name_prefix}-aks"
+  kubernetes_version  = "1.29"
 
   vnet_subnet_id = module.azure_networking.aks_subnet_id
 
-  system_node_count    = var.azure_aks_node_count
-  system_node_vm_size  = var.azure_aks_node_vm_size
+  system_node_count     = var.azure_aks_node_count
+  system_node_vm_size   = var.azure_aks_node_vm_size
   system_node_max_count = var.azure_aks_node_max_count
 
   common_tags = local.common_tags

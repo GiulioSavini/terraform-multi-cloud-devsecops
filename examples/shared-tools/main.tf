@@ -32,8 +32,15 @@ provider "kubernetes" {
   config_path = "~/.kube/config"
 }
 
-variable "environment" { type = string; default = "dev" }
-variable "grafana_password" { type = string; sensitive = true; default = "admin" }
+variable "environment" {
+  type    = string
+  default = "dev"
+}
+variable "grafana_password" {
+  type      = string
+  sensitive = true
+  default   = "admin"
+}
 
 # --- HashiCorp Vault (single instance for dev) ---
 module "vault" {

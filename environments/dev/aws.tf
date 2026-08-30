@@ -51,13 +51,13 @@ module "aws_ingress" {
     helm       = helm.eks
   }
 
-  cluster_name          = module.aws_eks.cluster_name
-  cluster_oidc_issuer   = module.aws_eks.oidc_issuer_url
-  vpc_id                = module.aws_networking.vpc_id
-  aws_region            = var.aws_region
-  domain_name           = var.domain_name
-  letsencrypt_email     = var.letsencrypt_email
-  oidc_provider_arn     = module.aws_eks.oidc_provider_arn
+  cluster_name        = module.aws_eks.cluster_name
+  cluster_oidc_issuer = module.aws_eks.oidc_issuer_url
+  vpc_id              = module.aws_networking.vpc_id
+  aws_region          = var.aws_region
+  domain_name         = var.domain_name
+  letsencrypt_email   = var.letsencrypt_email
+  oidc_provider_arn   = module.aws_eks.oidc_provider_arn
 
   depends_on = [module.aws_eks]
 }

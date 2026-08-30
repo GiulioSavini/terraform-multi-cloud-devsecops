@@ -159,11 +159,21 @@ module "service_mesh" {
 # Variables & Outputs
 # =============================================================================
 
-variable "aws_region" { type = string; default = "eu-west-1" }
+variable "aws_region" {
+  type    = string
+  default = "eu-west-1"
+}
 variable "azure_subscription_id" { type = string }
 variable "gcp_project_id" { type = string }
-variable "gcp_region" { type = string; default = "europe-west1" }
-variable "grafana_password" { type = string; sensitive = true; default = "admin" }
+variable "gcp_region" {
+  type    = string
+  default = "europe-west1"
+}
+variable "grafana_password" {
+  type      = string
+  sensitive = true
+  default   = "admin"
+}
 
 output "eks_cluster_name" {
   value = module.eks.cluster_name
