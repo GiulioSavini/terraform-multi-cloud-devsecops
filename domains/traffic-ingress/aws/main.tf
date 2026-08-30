@@ -12,6 +12,7 @@ locals {
 # ─── AWS Load Balancer Controller IRSA ───────────────────────
 resource "aws_iam_role" "lb_controller" {
   name = "${local.name_prefix}-lb-controller"
+  tags = var.common_tags
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -35,6 +36,7 @@ resource "aws_iam_role" "lb_controller" {
 
 resource "aws_iam_policy" "lb_controller" {
   name        = "${local.name_prefix}-lb-controller-policy"
+  tags        = var.common_tags
   description = "IAM policy for AWS Load Balancer Controller"
 
   policy = jsonencode({
@@ -210,6 +212,7 @@ resource "helm_release" "aws_lb_controller" {
 # ─── External DNS IRSA ───────────────────────────────────────
 resource "aws_iam_role" "external_dns" {
   name = "${local.name_prefix}-external-dns"
+  tags = var.common_tags
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

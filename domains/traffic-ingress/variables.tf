@@ -1,13 +1,3 @@
-variable "landing_zone" {
-  description = "Platform identifier."
-  type        = string
-}
-
-variable "environment" {
-  description = "Deployment environment (dev, stg, prd)."
-  type        = string
-}
-
 variable "clouds" {
   description = "Clouds in scope."
   type        = list(string)

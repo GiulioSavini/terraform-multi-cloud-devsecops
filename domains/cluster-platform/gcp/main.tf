@@ -5,8 +5,7 @@
 # -----------------------------------------------------------------------------
 
 locals {
-  name_prefix = "${var.project}-${var.environment}"
-  location    = var.regional ? var.region : "${var.region}-b"
+  location = var.regional ? var.region : "${var.region}-b"
 }
 
 # ─── GKE Node Service Account ────────────────────────────────
@@ -167,6 +166,13 @@ resource "google_container_node_pool" "system" {
       enable_integrity_monitoring = true
     }
 
+    # The v0.1/v1beta1 metadata endpoints serve node credentials without the
+    # Metadata-Flavor header, so any pod that can reach 169.254.169.254 can read
+    # them. Workload Identity below is only effective with these disabled.
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
+
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
@@ -212,6 +218,13 @@ resource "google_container_node_pool" "workload" {
     shielded_instance_config {
       enable_secure_boot          = true
       enable_integrity_monitoring = true
+    }
+
+    # The v0.1/v1beta1 metadata endpoints serve node credentials without the
+    # Metadata-Flavor header, so any pod that can reach 169.254.169.254 can read
+    # them. Workload Identity below is only effective with these disabled.
+    metadata = {
+      disable-legacy-endpoints = "true"
     }
 
     workload_metadata_config {

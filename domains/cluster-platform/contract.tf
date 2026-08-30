@@ -39,7 +39,6 @@ module "aws" {
   count  = local.aws_enabled ? 1 : 0
   source = "./aws"
 
-  project     = var.landing_zone
   environment = var.environment
 
   cluster_name       = local.cluster_name
@@ -63,7 +62,6 @@ module "azure" {
   count  = local.azure_enabled ? 1 : 0
   source = "./azure"
 
-  project     = var.landing_zone
   environment = var.environment
 
   location            = var.placement.azure.location

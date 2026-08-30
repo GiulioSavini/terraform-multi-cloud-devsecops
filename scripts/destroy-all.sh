@@ -7,6 +7,7 @@
 set -euo pipefail
 
 ENV=${1:-dev}
+PHASE=${2:-foundation}
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -39,7 +40,7 @@ echo ""
 echo -e "${YELLOW}Starting destruction of $ENV environment...${NC}"
 echo ""
 
-cd "environments/$ENV"
+cd "deployments/$ENV/$PHASE"
 
 # Show what will be destroyed
 echo "--- Resources to be destroyed ---"

@@ -14,22 +14,18 @@ A clear and concise description of the bug.
 
 Which module is affected?
 
-- [ ] `modules/aws/eks`
-- [ ] `modules/aws/networking`
-- [ ] `modules/aws/security`
-- [ ] `modules/aws/ingress`
-- [ ] `modules/azure/aks`
-- [ ] `modules/azure/networking`
-- [ ] `modules/azure/security`
-- [ ] `modules/azure/ingress`
-- [ ] `modules/gcp/gke`
-- [ ] `modules/gcp/networking`
-- [ ] `modules/gcp/security`
-- [ ] `modules/gcp/ingress`
-- [ ] `modules/shared/vault`
-- [ ] `modules/shared/gatekeeper`
-- [ ] `modules/shared/monitoring`
-- [ ] `modules/shared/service-mesh`
+- [ ] `domains/networking`
+- [ ] `domains/access-control`
+- [ ] `domains/cluster-platform`
+- [ ] `domains/traffic-ingress`
+- [ ] `domains/policy-enforcement`
+- [ ] `domains/secrets-management`
+- [ ] `domains/observability`
+- [ ] `domains/service-mesh`
+- [ ] `platform` (naming, tagging)
+- [ ] `compliance` (controls, policies)
+- [ ] `applications` (cloud-foundation, cluster-services)
+- [ ] `deployments`
 - [ ] Other (please specify)
 
 ## Environment

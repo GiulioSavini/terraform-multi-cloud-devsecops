@@ -81,5 +81,5 @@ When using this project, we recommend:
 - Enable state encryption and use remote backends with access controls
 - Rotate credentials and use short-lived tokens where possible
 - Enable audit logging on all cloud accounts
-- Run `tfsec` and `checkov` scans in your CI/CD pipeline
+- Run `trivy config` and the Conftest policies in `compliance/policies` in your CI/CD pipeline
 - Review Terraform plans carefully before applying

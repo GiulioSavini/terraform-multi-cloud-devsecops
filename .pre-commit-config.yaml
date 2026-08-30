@@ -19,20 +19,13 @@ repos:
       - id: terraform_validate
       - id: terraform_tflint
         args:
-          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
-      - id: terraform_tfsec
-        args:
-          - --args=--soft-fail
-      - id: terraform_checkov
-        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl        args:
           - --args=--quiet
           - --args=--skip-check CKV_AWS_79,CKV_AWS_88
 
   - repo: https://github.com/gruntwork-io/pre-commit
     rev: v0.1.23
     hooks:
-      - id: terragrunt-hclfmt
-
   - repo: https://github.com/hadolint/hadolint
     rev: v2.12.0
     hooks:

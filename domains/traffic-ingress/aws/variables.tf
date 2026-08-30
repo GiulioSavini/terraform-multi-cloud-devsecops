@@ -43,3 +43,9 @@ variable "letsencrypt_email" {
     error_message = "Must be a valid email address."
   }
 }
+
+variable "common_tags" {
+  description = "Tags applied to every taggable resource this adapter creates."
+  type        = map(string)
+  default     = {}
+}

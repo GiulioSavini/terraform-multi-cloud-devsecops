@@ -9,6 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 ENV=${1:-dev}
+PHASE=${2:-foundation}
 cd "$PROJECT_DIR"
 
 echo "╔══════════════════════════════════════════════╗"
@@ -28,10 +29,11 @@ bash "$SCRIPT_DIR/setup-backend.sh" "$ENV"
 echo -e "\n🔍 Step 4/4: Auto-discovering variables..."
 bash "$SCRIPT_DIR/get-variables.sh" "$ENV"
 
-cd "environments/$ENV" && terraform init -upgrade
+cd "deployments/$ENV/$PHASE" && terraform init -upgrade
 
 echo -e "\n╔══════════════════════════════════════════════╗"
 echo "║   Bootstrap complete!                        ║"
 echo "╚══════════════════════════════════════════════╝"
 echo ""
-echo "Next: make plan ENV=$ENV"
+echo "Next: make plan ENV=$ENV PHASE=$PHASE"
+echo "     foundation must be applied before any services-* root."

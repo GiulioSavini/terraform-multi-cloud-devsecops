@@ -79,9 +79,7 @@ The following hooks are configured:
 - `terraform fmt` - Format Terraform files
 - `terraform validate` - Validate Terraform configuration
 - `tflint` - Lint Terraform files
-- `tfsec` - Static analysis for security issues
-- `checkov` - Policy-as-code scanning
-- `detect-secrets` - Prevent secrets from being committed
+- `detect-private-key` - Block committed private keys
 - `markdownlint` - Lint Markdown files
 
 Run all hooks manually:

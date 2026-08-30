@@ -32,7 +32,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: [dev, stg, prd]
+        # foundation and each services-* root hold separate state, so drift has
+        # to be checked per root, not per environment.
+        include:
+          - { environment: dev, phase: foundation }
+          - { environment: dev, phase: services-aws }
+          - { environment: stg, phase: foundation }
+          - { environment: stg, phase: services-aws }
+          - { environment: stg, phase: services-azure }
+          - { environment: prd, phase: foundation }
+          - { environment: prd, phase: services-aws }
+          - { environment: prd, phase: services-azure }
+          - { environment: prd, phase: services-gcp }
     steps:
       - name: Check if environment should run
         id: check
@@ -46,24 +57,24 @@ jobs:
 
       - name: Checkout
         if: steps.check.outputs.should_run == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Terraform
         if: steps.check.outputs.should_run == 'true'
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Configure AWS Credentials
         if: steps.check.outputs.should_run == 'true'
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: eu-west-1
 
       - name: Azure Login
         if: steps.check.outputs.should_run == 'true'
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -71,20 +82,20 @@ jobs:
 
       - name: GCP Auth
         if: steps.check.outputs.should_run == 'true'
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Terraform Init
         if: steps.check.outputs.should_run == 'true'
-        working-directory: environments/${{ matrix.environment }}
+        working-directory: deployments/${{ matrix.environment }}/${{ matrix.phase }}
         run: terraform init -input=false
 
       - name: Detect Drift
         if: steps.check.outputs.should_run == 'true'
         id: drift
-        working-directory: environments/${{ matrix.environment }}
+        working-directory: deployments/${{ matrix.environment }}/${{ matrix.phase }}
         run: |
           set +e
           terraform plan -input=false -detailed-exitcode -var-file=terraform.tfvars \
@@ -108,7 +119,7 @@ jobs:
 
       - name: Create Issue on Drift
         if: steps.check.outputs.should_run == 'true' && steps.drift.outputs.drift_detected == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const title = `[Drift] Configuration drift detected in ${{ matrix.environment }}`;

@@ -4,10 +4,6 @@
 # Key Vault CSI driver, and Azure Policy addon.
 # -----------------------------------------------------------------------------
 
-locals {
-  name_prefix = "${var.project}-${var.environment}"
-}
-
 # ─── User Assigned Identity ──────────────────────────────────
 resource "azurerm_user_assigned_identity" "aks" {
   name                = "${var.cluster_name}-identity"

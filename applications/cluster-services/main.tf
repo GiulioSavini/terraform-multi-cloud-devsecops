@@ -31,8 +31,6 @@ module "tags" {
 module "traffic_ingress" {
   source = "../../domains/traffic-ingress"
 
-  landing_zone  = var.landing_zone
-  environment   = var.environment
   clouds        = [var.cloud]
   networks      = var.networks
   cluster_names = { (var.cloud) = var.cluster_name }

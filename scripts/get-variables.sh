@@ -7,6 +7,7 @@
 set -euo pipefail
 
 ENV=${1:-dev}
+PHASE=${2:-foundation}
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
@@ -62,7 +63,7 @@ for tool in kubectl helm; do
 done
 
 # --- Generate tfvars ---
-TFVARS_FILE="environments/$ENV/terraform.tfvars"
+TFVARS_FILE="deployments/$ENV/$PHASE/terraform.tfvars"
 echo -e "\n=============================================="
 echo -e "  Generating ${GREEN}$TFVARS_FILE${NC}"
 echo "=============================================="
@@ -121,4 +122,4 @@ grafana_password   = "change-me-in-production"
 EOF
 
 echo -e "\n${GREEN}Done!${NC} Review: cat $TFVARS_FILE"
-echo "Next: cd environments/$ENV && terraform init && terraform plan"
+echo "Next: cd deployments/$ENV/$PHASE && terraform init && terraform plan"

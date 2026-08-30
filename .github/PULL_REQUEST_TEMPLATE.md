@@ -16,33 +16,28 @@ Fixes #(issue number)
 - [ ] CI/CD changes
 - [ ] Security fix
 
-## Modules Affected
+## Contexts Affected
 
-- [ ] `modules/aws/eks`
-- [ ] `modules/aws/networking`
-- [ ] `modules/aws/security`
-- [ ] `modules/aws/ingress`
-- [ ] `modules/azure/aks`
-- [ ] `modules/azure/networking`
-- [ ] `modules/azure/security`
-- [ ] `modules/azure/ingress`
-- [ ] `modules/gcp/gke`
-- [ ] `modules/gcp/networking`
-- [ ] `modules/gcp/security`
-- [ ] `modules/gcp/ingress`
-- [ ] `modules/shared/vault`
-- [ ] `modules/shared/gatekeeper`
-- [ ] `modules/shared/monitoring`
-- [ ] `modules/shared/service-mesh`
+- [ ] `domains/networking`
+- [ ] `domains/access-control`
+- [ ] `domains/cluster-platform`
+- [ ] `domains/traffic-ingress`
+- [ ] `domains/policy-enforcement`
+- [ ] `domains/secrets-management`
+- [ ] `domains/observability`
+- [ ] `domains/service-mesh`
+- [ ] `platform` (naming, tagging)
+- [ ] `compliance` (controls, policies)
+- [ ] `applications` (cloud-foundation, cluster-services)
+- [ ] `deployments`
 
 ## Checklist
 
 - [ ] My code follows the project's coding standards
-- [ ] I have run `terraform fmt` on all modified files
-- [ ] I have run `terraform validate` successfully
+- [ ] I have run `make check` (fmt, validate, policy, boundaries) successfully
 - [ ] I have run `pre-commit run --all-files` with no failures
 - [ ] I have run `tflint` with no errors
-- [ ] I have run `tfsec` / `checkov` with no critical findings
+- [ ] I have run `make security` (Trivy) with no new findings
 - [ ] I have updated the documentation accordingly
 - [ ] I have added/updated variable descriptions
 - [ ] I have added/updated output descriptions

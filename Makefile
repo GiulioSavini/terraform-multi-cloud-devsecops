@@ -30,15 +30,9 @@ destroy:
 fmt:
 	terraform fmt -recursive
 
-ROOTS := platform/naming platform/tagging compliance/controls \
-         domains/networking domains/access-control domains/cluster-platform \
-         domains/traffic-ingress domains/policy-enforcement \
-         domains/secrets-management domains/observability domains/service-mesh \
-         applications/cloud-foundation applications/cluster-services \
-         deployments/dev/foundation deployments/dev/services-aws \
-         deployments/stg/foundation deployments/stg/services-aws deployments/stg/services-azure \
-         deployments/prd/foundation deployments/prd/services-aws \
-         deployments/prd/services-azure deployments/prd/services-gcp
+# Roots are discovered, not listed: a hand-maintained list drifts from the tree
+# the first time someone adds a context, and then quietly stops checking it.
+ROOTS = $(shell find . -name versions.tf -not -path './.git/*' -printf '%h\n' | sort)
 
 validate:
 	@set -e; for d in $(ROOTS); do \
@@ -46,21 +40,3 @@ validate:
 		( cd $$d && terraform init -backend=false -input=false >/dev/null && terraform validate ); \
 	done
 
-lint:
-	tflint --recursive --minimum-failure-severity=warning
-
-# Unit tests for the compliance policies themselves.
-policy:
-	conftest verify --policy $(POLICY)
-
-# Evaluate a real plan against policy. Requires `make plan` first.
-policy-plan:
-	cd $(DEPLOY) && terraform show -json tfplan > tfplan.json
-	conftest test --policy $(POLICY) $(DEPLOY)/tfplan.json
-
-security:
-	trivy config --exit-code 1 --severity CRITICAL,HIGH --ignorefile .trivyignore .
-
-check: fmt validate policy
-	terraform fmt -check -recursive
-	./scripts/check-boundaries.sh

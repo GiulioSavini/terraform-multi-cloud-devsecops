@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shared OPA Gatekeeper module with constraint templates and policies
 - Shared monitoring module with kube-prometheus-stack (Prometheus, Grafana, Alertmanager)
 - Shared service mesh module with Linkerd
-- Pre-commit hooks for terraform fmt, validate, tflint, tfsec, and checkov
+- Pre-commit hooks for terraform fmt, validate and tflint
 - GitHub Actions CI/CD pipelines for validation, security scanning, and deployment
 - Comprehensive documentation with usage examples for all modules
 - TFLint configuration with AWS, Azure, and GCP plugins

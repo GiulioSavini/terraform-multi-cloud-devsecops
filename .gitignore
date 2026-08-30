@@ -16,9 +16,6 @@ override.tf.json
 terraform.rc
 .terraform.tfstate.lock.info
 
-# Terragrunt
-.terragrunt-cache/
-
 # Kubernetes
 kubeconfig
 *.kubeconfig
@@ -49,9 +46,6 @@ charts/*.tgz
 credentials
 credentials.*
 secret.*
-
-# Infracost
-.infracost/
 
 # OS
 Thumbs.db

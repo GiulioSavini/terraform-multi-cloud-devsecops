@@ -40,6 +40,7 @@ module "aws" {
   oidc_provider_arn   = var.aws_irsa.oidc_provider_arn
   vpc_id              = var.networks["aws"].id
   aws_region          = var.placement.aws.region
+  common_tags         = var.tags
 
   domain_name       = var.domain_name
   letsencrypt_email = var.letsencrypt_email

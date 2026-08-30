@@ -1,9 +1,28 @@
 # Suppressions must name the control and the reason. An entry without a reason
-# is a finding someone hid, and review should treat it as one.
+# is a finding someone hid, and review should treat it as one. Everything not
+# listed here fails the build.
 
-# AVD-AWS-0040 / AVD-AWS-0041: the EKS API server is public in dev and stg by
-# design — a private endpoint needs a bastion or VPN this platform does not
-# provision. Policy CLU-01 asserts it is disabled in prd, and that assertion is
-# unit tested in compliance/policies/kubernetes_test.rego.
+# AVD-AWS-0040 / AVD-AWS-0041 (EKS), AVD-AZU-0041 (AKS), AVD-GCP-0061 (GKE) —
+# the same decision on three clouds: the API server is reachable from the
+# internet in dev and stg, because restricting it needs a bastion or a VPN this
+# platform does not provision. Policy CLU-01 asserts the public endpoint is
+# disabled in prd, and that assertion is unit tested in
+# compliance/policies/kubernetes_test.rego. Narrowing dev and stg is a matter of
+# supplying the operator's CIDR ranges, not of changing this code.
 AVD-AWS-0040
 AVD-AWS-0041
+AVD-AZU-0041
+AVD-GCP-0061
+
+# AVD-AWS-0104 — nodes need outbound internet for image pulls, OS patching and
+# cluster registration, and reach it through the NAT gateway. Egress is already
+# restricted by port; the destination cannot be narrowed further without pinning
+# registry and API addresses that the providers do not publish.
+AVD-AWS-0104
+
+# AVD-AWS-0132 — buckets are encrypted with SSE-KMS under the AWS-managed key.
+# A customer-managed key is the stricter option, but it needs a key policy
+# granting the service principals that write these objects, which has to be
+# validated against a live account before it ships. Tracked, not dismissed: the
+# data is encrypted, just not under our own key.
+AVD-AWS-0132
